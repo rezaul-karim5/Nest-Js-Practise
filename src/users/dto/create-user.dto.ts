@@ -1,17 +1,31 @@
-// create-user.dto.ts
-
-import { IsEnum, IsNotEmpty, IsString } from "@nestjs/class-validator";
-import { UserRole } from "../users.entity";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsEmail, IsEnum } from 'class-validator';
+import { UserRole } from '../users.entity';
 
 export class CreateUserDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
+    @ApiProperty({ example: 'John Doe', description: 'The name of the user' })
+    @IsString()
+    name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  password: string;
+    @ApiProperty({
+        example: 'john@example.com',
+        description: 'The email of the user',
+    })
+    @IsEmail()
+    email: string;
 
-  @IsEnum(UserRole, { each: true }) // If role can be an array of UserRole
-  role: UserRole[];
+    @ApiProperty({
+        example: 'password123',
+        description: 'The password for the user',
+    })
+    @IsString()
+    password: string;
+
+    @ApiProperty({
+        enum: UserRole,
+        example: UserRole.USER,
+        description: 'The role of the user',
+    })
+    @IsEnum(UserRole)
+    role: UserRole[];
 }
