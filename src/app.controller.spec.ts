@@ -5,19 +5,19 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
 describe('AppController', () => {
-  let appController: AppController;
+    let appController: AppController;
 
-  beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule, UsersModule],
-      controllers: [AppController],
-      providers: [AppService],
-    }).compile();
+    beforeEach(async () => {
+        const app: TestingModule = await Test.createTestingModule({
+            imports: [AuthModule, UsersModule],
+            controllers: [AppController],
+            providers: [AppService],
+        }).compile();
 
-    appController = app.get<AppController>(AppController);
-  });
+        appController = app.get<AppController>(AppController);
+    });
 
-  it('should be defined', () => {
-    expect(appController).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(appController).toBeDefined();
+    });
 });

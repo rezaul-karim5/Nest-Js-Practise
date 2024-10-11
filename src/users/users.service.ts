@@ -5,23 +5,24 @@ import { IUserRepository, USER_REPOSITORY } from './user.repository.interface';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @Inject(USER_REPOSITORY)
-    private userRepository: IUserRepository) {}
+    constructor(
+        @Inject(USER_REPOSITORY)
+        private userRepository: IUserRepository,
+    ) {}
 
-  async findOne(id: number): Promise<User | undefined> {
-    return this.userRepository.findOne(id);
-  }
+    async findOne(id: number): Promise<User | undefined> {
+        return this.userRepository.findOne(id);
+    }
 
-  async findOneByName(name: string): Promise<User | undefined> {
-    return this.userRepository.findOneByName(name);
-  }
+    async findOneByName(name: string): Promise<User | undefined> {
+        return this.userRepository.findOneByName(name);
+    }
 
-  async findAll(): Promise<User[]> {
-    return this.userRepository.findAll();
-  }
+    async findAll(): Promise<User[]> {
+        return this.userRepository.findAll();
+    }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
-    return this.userRepository.createUser(createUserDto);
-  }
+    async createUser(createUserDto: CreateUserDto): Promise<User> {
+        return this.userRepository.createUser(createUserDto);
+    }
 }
