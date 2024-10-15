@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    ParseFilePipeBuilder,
+    Post,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { User, UserRole } from './users.entity';
@@ -13,7 +23,10 @@ import {
     ApiTags,
     ApiParam,
     ApiBody,
+    ApiConsumes,
 } from '@nestjs/swagger';
+import { UploadFileDto } from './dto/upload-file.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
 @Controller('users')
@@ -65,5 +78,46 @@ export class UsersController {
     @UseGuards(PermissionGuard)
     async createUser(@Body() createUserDto: CreateUserDto) {
         return this.usersService.createUser(createUserDto);
+    }
+
+    @Post('upload')
+    @ApiOperation({ summary: 'Upload a file' })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'The file to upload',
+                },
+                name: {
+                    type: 'string',
+                    example: 'Testing',
+                    description: 'The name of the file',
+                },
+            },
+            required: ['file', 'name'],
+        },
+    })
+    @ApiResponse({ status: 201, description: 'File successfully uploaded.' })
+    @ApiResponse({ status: 400, description: 'Bad request.' })
+    @UseInterceptors(FileInterceptor('file'))
+    uploadFileAndPassValidation(
+        @Body() uploadFile: UploadFileDto,
+        @UploadedFile(
+            new ParseFilePipeBuilder()
+                .addFileTypeValidator({
+                    fileType: 'text',
+                })
+                .addMaxSizeValidator({
+                    maxSize: 20 * 1024 * 1024,
+                })
+                .build({ fileIsRequired: true }),
+        )
+        file: Express.Multer.File,
+    ) {
+        return this.usersService.saveFile(uploadFile, file);
     }
 }
