@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IUserRepository, USER_REPOSITORY } from './user.repository.interface';
@@ -6,6 +6,7 @@ import { extname, join } from 'path';
 import { v4 as uuid } from 'uuid';
 import { promises as fs } from 'fs';
 import { UploadFileDto } from './dto/upload-file.dto';
+import { errorMessages } from 'src/global/error';
 
 @Injectable()
 export class UsersService {
@@ -16,19 +17,27 @@ export class UsersService {
     ) {}
 
     async findOne(id: number): Promise<User | undefined> {
-        return this.userRepository.findOne(id);
+        const user = await this.userRepository.findOne(id)
+        if(!user) {
+            throw new NotFoundException(errorMessages.userNotFound);
+        }
+        return user;
     }
 
     async findOneByName(name: string): Promise<User | undefined> {
-        return this.userRepository.findOneByName(name);
+        const user = await this.userRepository.findOneByName(name);
+        if(!user) {
+            throw new NotFoundException(errorMessages.userNotFound);
+        }
+        return user;
     }
 
     async findAll(): Promise<User[]> {
-        return this.userRepository.findAll();
+        return await this.userRepository.findAll();
     }
 
     async createUser(createUserDto: CreateUserDto): Promise<User> {
-        return this.userRepository.createUser(createUserDto);
+        return await this.userRepository.createUser(createUserDto);
     }
 
     async saveFile(
