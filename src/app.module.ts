@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { configValidationSchema } from './config/config.schema';
 import { User } from './users/users.entity';
+import { Audit } from './audit/audit.entity';
 
 @Module({
     imports: [
@@ -24,7 +25,7 @@ import { User } from './users/users.entity';
                 username: configService.get('DB_USER'),
                 password: configService.get('DB_PASSWORD'),
                 database: configService.get('DB_NAME'),
-                entities: [User],
+                entities: [User, Audit],
                 migrations: ['dist/migrations/*{.ts,.js}'],
                 synchronize: false,
             }),

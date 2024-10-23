@@ -50,7 +50,7 @@ export class AuthGuard implements CanActivate {
                 payload.roles == UserRole.USER
                     ? convertEnumToArray(UserPermission)
                     : convertEnumToArray(PermissionEnum);
-            request['user'] = payload;
+            request.body['user'] = payload;
         } catch (error) {
             throw new UnauthorizedException(error);
         }
@@ -74,7 +74,8 @@ export class PermissionGuard implements CanActivate {
             return true;
         }
 
-        const { user } = context.switchToHttp().getRequest();
+        const request = context.switchToHttp().getRequest();
+        const user = request.body['user'];
 
         const hasPermissions = requiredPermissions.some((permission) =>
             user.permissions?.includes(permission),
@@ -96,7 +97,8 @@ export class RolesGuard implements CanActivate {
             return true;
         }
 
-        const { user } = context.switchToHttp().getRequest();
+        const request = context.switchToHttp().getRequest();
+        const user = request.body['user'];
 
         const hasRole = requiredRoles.some((role) =>
             user.roles?.includes(role),
